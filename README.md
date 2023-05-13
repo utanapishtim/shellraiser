@@ -1,17 +1,17 @@
-# 🤫 Shhh
+# 🤫 Shellraiser
 
  Shhhell out in node, inspired by [`shellblazer`](https://github.com/butera-simone/shellblazer) but gives you access to the process itself.
 
  ## Install
 
- `npm i --save shhh`
+ `npm i --save shellraiser`
 
  ## Usage
 
  ### Node
 
  ```js
- const sh = require('shhh')
+ const sh = require('shellraiser')
  await sh('ls')
  await sh('npm', ['i -S shhh'])
  await sh('curl', ['https://github.com'], { stdio: 'inherit' })
@@ -26,7 +26,7 @@
 
 ## API
 
-### const sh = require('shhh')
+### const sh = require('shellraiser')
 
 The `sh` function spawns a process, it is essentially a thin wrapper around `const { spawn } = require('child_process')`
 

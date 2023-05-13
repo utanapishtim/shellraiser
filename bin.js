@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const shhh = require('./')
+const shellraiser = require('./')
 
 const [cmd, ...args] = process.argv.slice(2)
 
-const sh = shhh(cmd, args, { stdio: 'inherit' })
+const sh = shellraiser(cmd, args, { stdio: 'inherit' })
 
 const destroy = sh.close.bind(sh)
 

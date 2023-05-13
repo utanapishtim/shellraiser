@@ -1,10 +1,10 @@
 {
-  "name": "shhh",
+  "name": "shellraiser",
   "version": "1.0.0",
-  "description": "🤫",
+  "description": "😈",
   "main": "index.js",
   "bin": {
-    "shhh": "./bin.js"
+    "shellraiser": "./bin.js"
   },
   "scripts": {
     "test": "standard && brittle tests/**/*.js"
