@@ -1,6 +1,6 @@
 # 😈 Shellraiser
 
-Riase shell in node, inspired by [`shellblazer`](https://github.com/butera-simone/shellblazer) but gives you access to the process itself.
+Raise shell in node, inspired by [`shellblazer`](https://github.com/butera-simone/shellblazer) but gives you access to the process itself.
 
  ## Install
 
