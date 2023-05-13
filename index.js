@@ -15,7 +15,7 @@ class Sh extends ReadyResource {
   _ac = null
 
   constructor (cmd, args, _opts = {}) {
-    assert(cmd)
+    assert(cmd, 'Must provide a cmd!')
     super()
 
     if (typeof args === 'string') args = args.split(' ').filter(Boolean)
@@ -30,7 +30,18 @@ class Sh extends ReadyResource {
     this.cmd = cmd
     this.args = args
     this.opts = opts
-    this.promise = new Promise((_resolve, _reject) => Object.assign(this, { _resolve, _reject }))
+
+    this.promise = new Promise((_resolve, _reject) => Object.assign(this, { _resolve, _reject })).then(
+      (x) => {
+        this.close()
+        return x
+      },
+      (e) => {
+        if (e.code === 'ABORT_ERR') return // swallow error from external process abort
+        this.close()
+        throw e
+      }
+    )
 
     this._ac = ac ?? new AbortController()
 
@@ -62,6 +73,7 @@ class Sh extends ReadyResource {
       ...this.opts,
       signal: this._ac.signal
     })
+
     this.process.on('error', this.reject.bind(this))
     this.process.on('exit', code => {
       if (code) this.reject(new Error(`${this.cmd} ${this.args.join(' ')}${l ? ' ' : ''}failed with code: ${code}`))
@@ -74,4 +86,6 @@ class Sh extends ReadyResource {
   }
 }
 
-module.exports = (...args) => new Sh(...args)
+const shhh = (...args) => new Sh(...args)
+
+module.exports = shhh

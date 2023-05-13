@@ -1,8 +1,13 @@
-const minimist = require('minimist')
+#!/usr/bin/env node
 const shhh = require('./')
 
-const { _: [cmd, ...args], ...opts } = minimist(process.argv.slice(2))
+const [cmd, ...args] = process.argv.slice(2)
 
-const sh = shhh(cmd, args, { ...opts, stdio: 'inherit' })
+const sh = shhh(cmd, args, { stdio: 'inherit' })
 
-process.on('exit', () => sh.close())
+const destroy = sh.close.bind(sh)
+
+process.on('exit', destroy)
+process.on('beforeExit', destroy)
+process.on('uncaughtException', destroy)
+process.on('unhandledRejection', destroy)
