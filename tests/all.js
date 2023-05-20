@@ -18,6 +18,19 @@ test('it should do nothing if reclosed', async (t) => {
   t.ok(await shell.close() || true)
 })
 
+test('it can resolve with an arbitrary value', async (t) => {
+  const shell = sh('ls', __dirname)
+  shell.resolve(1)
+  const result = await shell
+  t.is(result, 1)
+})
+
+test('it can reject with an arbitrary error', async (t) => {
+  const shell = sh('ls', __dirname)
+  shell.reject(new Error('error'))
+  try { await shell } catch (e) { t.is(e.message, 'error') }
+})
+
 async function concat (xs) {
   let str = ''
   for await (const x of xs) str += x.toString()

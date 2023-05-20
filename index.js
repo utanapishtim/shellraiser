@@ -1,7 +1,9 @@
 const { spawn } = require('child_process')
+const { once } = require('events')
 const assert = require('nanoassert')
 const ReadyResource = require('ready-resource')
 const isOptions = require('is-options')
+const filicide = require('tree-kill')
 
 class Sh extends ReadyResource {
   cmd = null
@@ -31,20 +33,19 @@ class Sh extends ReadyResource {
     this.args = args
     this.opts = opts
 
-    this.promise = new Promise((_resolve, _reject) => Object.assign(this, { _resolve, _reject })).then(
-      (x) => {
-        this.close()
-        return x
-      },
-      (e) => {
-        if (e.code === 'ABORT_ERR') return // swallow error from external process abort
-        this.close()
-        throw e
-      }
-    )
+    const p = new Promise((_resolve, _reject) => Object.assign(this, { _resolve, _reject }))
 
-    this._ac = ac ?? new AbortController()
+    const onresolved = (x) => {
+      this.close()
+      return x
+    }
 
+    const onrejected = (e) => {
+      this.close()
+      throw e
+    }
+
+    this.promise = p.then(onresolved, onrejected)
     this.ready()
   }
 
@@ -70,22 +71,24 @@ class Sh extends ReadyResource {
     this.process = spawn(this.cmd, this.args, {
       env: process.env,
       cwd: '.',
-      ...this.opts,
-      signal: this._ac.signal
+      ...this.opts
     })
 
     this.process.on('error', this.reject.bind(this))
-    this.process.on('exit', code => {
+    this.process.on('exit', (code) => {
       if (code) this.reject(new Error(`${this.cmd} ${this.args.join(' ')}${l ? ' ' : ''}failed with code: ${code}`))
       else this.resolve()
     })
   }
 
   async _close () {
-    this._ac.abort()
+    const pid = this.process.pid
+    const exited = once(this.process, 'exit')
+    filicide(pid)
+    return exited
   }
 }
 
-const shhh = (...args) => new Sh(...args)
+const shellraiser = (...args) => new Sh(...args)
 
-module.exports = shhh
+module.exports = shellraiser

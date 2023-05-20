@@ -1,6 +1,6 @@
 {
   "name": "shellraiser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "😈",
   "main": "index.js",
   "bin": {
@@ -22,7 +22,8 @@
     "minimist": "^1.2.8",
     "nanoassert": "^2.0.0",
     "ready-resource": "^1.0.0",
-    "streamx": "^2.13.2"
+    "streamx": "^2.13.2",
+    "tree-kill": "^1.2.2"
   },
   "devDependencies": {
     "brittle": "^3.2.1",
